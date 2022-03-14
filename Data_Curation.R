@@ -173,7 +173,7 @@ colData(GSE23554_SE)[["survival_time_unit"]] <- "day"
 GSE14764_SE <- run_all(raw_tar = "GSE14764_RAW.tar" , 
                        goe_path = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE14764&format=file" , 
                        brain_path = "http://mbni.org/customcdf/24.0.0/ensg.download/hgu133ahsensgcdf_24.0.0.tar.gz",
-                       delim = ".cel.*" , GPL = "GPL96",cancer_type=NA, treatment = NA, response = NA, survival_type = NA,
+                       delim = ".cel.*" , GPL = "GPL96",cancer_type=NA, treatment = NA, response = "residual tumor:ch1", survival_type = NA,
                        survival_time = "overall survival time:ch1", survival_time_unit= NA, event_occured = "overall survival event:ch1")
 
 colData(GSE14764_SE) [["cancer_type"]] <- "Ovarian Cancer"
@@ -215,6 +215,7 @@ GSE33072_SE <- run_all(raw_tar = "GSE33072_RAW.tar" ,
 colData(GSE33072_SE)[["cancer_type"]] <- "Lung cancer"
 colData(GSE33072_SE) [["survival_type"]] <- "progression_free_survival"
 colData(GSE33072_SE)$survival_time <- ifelse(is.na(colData(GSE33072_SE)$progression.free.survival.time..months..ch1), colData(GSE33072_SE)$pfsm..month..ch1, colData(GSE33072_SE)$progression.free.survival.time..months..ch1)
+colData(GSE33072_SE)$event_occured <- ifelse(is.na(colData(GSE33072_SE)$progression.free.survival.status.ch1), colData(GSE33072_SE)$pfsc..1.progressed..0.not.progressed..ch1, colData(GSE33072_SE)$progression.free.survival.status.ch1)
 colData(GSE33072_SE)[["survival_time_unit"]] <- "month"
 
 #==== 8 ====
@@ -230,7 +231,7 @@ colData(GSE25066_SE)[["treatment"]] <- "taxane-anthracycline"
 colData(GSE25066_SE)[["survival_type"]] <- "Distant recurrence-free survival (DRFS)"
 colData(GSE25066_SE)[["survival_time_unit"]] <- "year"
 
-#=====Save the 6 objects =======
+#=====Save the 8 objects =======
 qsave(GSE41998_SE, "GSE41998_SE.qs")
 qsave(GSE14671_SE, "GSE14671_SE.qs")
 qsave(GSE23554_SE, "GSE23554_SE.qs")
