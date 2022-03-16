@@ -78,8 +78,8 @@ ESet <-  function(rma.norm, GSE , delim, GPL, delim2=NA, cancer_type=NA, treatme
   
   # Assay data
   assay_data <- as.data.frame(exprs(rma.norm)) 
-  rownames(assay_data) <-sub("_at","",rownames(assay_data)) # ask how to improve
-  colnames(assay_data) <-sub(delim ,"",colnames(assay_data)) # ask how to improve
+  rownames(assay_data) <-sub("_at","",rownames(assay_data)) 
+  colnames(assay_data) <-sub(delim ,"",colnames(assay_data)) 
   if (!identical(c(grep("AFFX", rownames(assay_data))) , integer(0))) { 
     assay_data <- assay_data[-c(grep("AFFX", rownames(assay_data))),] } # Removing control genes (which start with "AFFX")
   
@@ -299,12 +299,11 @@ colData(GSE25066_SE)[["survival_time_unit"]] <- "year"
 GSE15622_SE <- run_all(raw_tar = "GSE15622_RAW.tar" , 
                        geo_path = "https://www.ncbi.nlm.nih.gov/geo/download/?acc=GSE15622&format=file" , 
                        brain_path = "http://mbni.org/customcdf/24.0.0/ensg.download/hgu133a2hsensgcdf_24.0.0.tar.gz",
-                       delim = "_.*" , GPL = "GPL8414", cancer_type=NA,treatment = "treatment.ch1", response = "response.ch1" , 
+                       delim = ".CEL" , GPL = "GPL8414", cancer_type=NA,treatment = "treatment:ch1", response = "response:ch1" , 
                        survival_type = NA, survival_time = NA,  
-                       survival_time_unit= NA, event_occured = NA, delim2=".CEL")
+                       survival_time_unit= NA, event_occured = NA)
 
 colData(GSE15622_SE)[["cancer_type"]] <- "Ovarian Cancer"
-colData(GSE15622_SE)[["survival_type"]] <- NA_character_
 ```
 
 
@@ -318,4 +317,6 @@ qsave(GSE20194_SE, "GSE20194_SE.qs")
 qsave(GSE50948_SE, "GSE50948_SE.qs")
 qsave(GSE33072_SE, "GSE33072_SE.qs")
 qsave(GSE25066_SE, "GSE25066_SE.qs")
+qsave(GSE15622_SE, "GSE15622_SE.qs")
+
 ```
