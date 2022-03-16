@@ -4,6 +4,10 @@ author: "Nikta Feizi, Christopher Eeles, Sisira Nair"
 date: "`r format(Sys.time(), '%a/%d/%b')`"
 output: html_document
 ---
+#Please note:
+Parameters of "run_all" function are data specific and must be defined by looking at the metadata outside of the function. 
+Run "assay_data <- as.data.frame(exprs(rma.norm)) " to find "delim" which is the delimiter that separates the GSM IDs from the assay_data column names.   
+Pheno_data  column names must be used to assign column names to pre-defined columns (in "prior" vector). 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
