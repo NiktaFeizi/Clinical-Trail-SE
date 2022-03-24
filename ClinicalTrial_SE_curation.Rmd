@@ -318,3 +318,17 @@ qsave(GSE25066_SE, "GSE25066_SE.qs")
 qsave(GSE15622_SE, "GSE15622_SE.qs")
 
 ```
+
+```{r}
+#===== Automatically upload SE objects to Zenodo =======
+remotes::install_github("bhklab/AnnotationGx@development")
+library(AnnotationGx)
+
+#input the GSE id or name of the dataset
+gse_id <- "GSE50948"
+fill_meta <- zenodoMetadata(title = paste("Clinical Dataset SE objects - ", gse_id, sep = ""), 
+                            description = paste("Curated clinical datasets for Roche collaboration, Task 4a. Data source - ", gse_id, sep = ""))
+
+depo_zen <- depositZenodo(file_path = paste(gse_id,"_SE.qs",sep = ""), metadata = fill_meta, publish = TRUE)
+
+```
