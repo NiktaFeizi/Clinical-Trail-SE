@@ -10,12 +10,14 @@ Run "assay_data <- as.data.frame(exprs(rma.norm)) " to find "delim" which is the
 Pheno_data  column names must be used to assign column names to pre-defined columns (in "prior" vector). 
 
 ```{r setup, include=FALSE}
+nthread <- 2
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
 ```{r}
 #' configure download options for this session
+opts <- options()
 options(encoding = "UTF-8" , timeout = 1000)
 work_dir = setwd(paste0(getwd()))
 ```
@@ -39,22 +41,27 @@ library(affy)
 ```
 
 ```{r}
+#' @param raw_tar Name of the tar file that contains raw expression values
+#' @param geo_path Path to the expression tar file 
+#' @param brain_path Path to the microarray source CDF package
+#' @return RMA normalized expression data
+
 geo_rma_norm<- function (raw_tar, geo_path , brain_path){
   
   #' Download CEL files
-  cel.file <- paste(work_dir, raw_tar, sep="/")
+  cel.file <- file.path(work_dir, raw_tar)
   options(download.file.method="curl", download.file.extra="-k -L")
   download.file(geo_path, cel.file)
   
   #' Unpack the CEL files
   exit_dir <- sub("\\..*", "", raw_tar)
   untar(raw_tar, exdir=exit_dir)
-  cel.files<-list.files(paste(exit_dir, "/", sep=""), pattern = "gz")
-  sapply(paste(exit_dir, cel.files, sep="/"), GEOquery::gunzip)
+  cel.files<-list.files(file.path(exit_dir), pattern = "gz")
+  sapply(file.path(exit_dir, cel.files), GEOquery::gunzip)
   
   #' Install the cdf brainarray package
   pack_name <- tail(stringr::str_split(brain_path, "/")[[1]], n=1) 
-  cdf.file <- paste(work_dir, pack_name, sep="/")
+  cdf.file <- file.path(work_dir, pack_name)
   options(download.file.method="curl", download.file.extra="-k -L")
   download.file( brain_path, cdf.file)
   #' @return None, installs packages to the global environment
@@ -62,8 +69,10 @@ geo_rma_norm<- function (raw_tar, geo_path , brain_path){
   
   #' RMA normalization
   cdf <- sub("_.*","",pack_name)
-  cels <- affy::list.celfiles(paste(exit_dir, "/", sep=""), full.names = TRUE)
+  cels <- affy::list.celfiles(file.path(exit_dir), full.names = TRUE)
   rma.norm <- affy::justRMA(filenames = cels, verbose = TRUE, cdfname = cdf)
+  
+  on.exit(options(opts))
   
   return(rma.norm)
   
@@ -308,16 +317,9 @@ colData(GSE15622_SE)[["cancer_type"]] <- "Ovarian Cancer"
 
 ```{r}
 #' ===== Save objects =======
-qsave(GSE41998_SE, "GSE41998_SE.qs")
-qsave(GSE14671_SE, "GSE14671_SE.qs")
-qsave(GSE23554_SE, "GSE23554_SE.qs")
-qsave(GSE14764_SE, "GSE14764_SE.qs")
-qsave(GSE20194_SE, "GSE20194_SE.qs")
-qsave(GSE50948_SE, "GSE50948_SE.qs")
-qsave(GSE33072_SE, "GSE33072_SE.qs")
-qsave(GSE25066_SE, "GSE25066_SE.qs")
-qsave(GSE15622_SE, "GSE15622_SE.qs")
-
+SE_objects <- c("GSE41998_SE", "GSE14671_SE", "GSE23554_SE", "GSE14764_SE", "GSE20194_SE", "GSE50948_SE", "GSE33072_SE", "GSE25066_SE", "GSE15622_SE")
+for (dataset in SE_objects) {qsave(get(dataset), file=paste0(dataset, ".qs"), nthread=nthread)}
+                                    
 ```
 
 ```{r}
